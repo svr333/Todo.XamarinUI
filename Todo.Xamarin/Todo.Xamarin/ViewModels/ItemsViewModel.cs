@@ -29,30 +29,21 @@ namespace Todo.Xamarin.ViewModels
             });
         }
 
-        async Task ExecuteLoadItemsCommand()
+        private async Task ExecuteLoadItemsCommand()
         {
             if (IsBusy)
                 return;
 
             IsBusy = true;
 
-            try
+            Items.Clear();
+            var items = await DataStore.GetItemsAsync(true);
+            foreach (var item in items)
             {
-                Items.Clear();
-                var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
-                {
-                    Items.Add(item);
-                }
+                Items.Add(item);
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+
+            IsBusy = false;
         }
     }
 }

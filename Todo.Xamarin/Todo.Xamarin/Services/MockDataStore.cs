@@ -38,7 +38,7 @@ namespace Todo.Xamarin.Services
 
         public async Task<bool> UpdateItemAsync(Item item)
         {
-            var oldItem = items.Where((Item arg) => arg.Id == item.Id).FirstOrDefault();
+            var oldItem = items.FirstOrDefault(x => x.Id == item.Id);
             items.Remove(oldItem);
             items.Add(item);
 
@@ -47,7 +47,7 @@ namespace Todo.Xamarin.Services
 
         public async Task<bool> DeleteItemAsync(string id)
         {
-            var oldItem = items.Where((Item arg) => arg.Id == id).FirstOrDefault();
+            var oldItem = items.FirstOrDefault(x => x.Id == id);
             items.Remove(oldItem);
 
             return await Task.FromResult(true);
