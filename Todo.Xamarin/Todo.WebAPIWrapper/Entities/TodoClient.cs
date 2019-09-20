@@ -1,6 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.Net;
+﻿using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -16,7 +14,7 @@ namespace Todo.WebAPIWrapper.Entities
 
         private readonly HttpClient _client;
 
-        public TodoClient(HttpClient client)
+        public TodoClient(HttpClient client = null)
         {
             // TODO: Refactor Httpclients and whatnots
 
