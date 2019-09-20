@@ -75,7 +75,7 @@
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White" />
             </StackLayout>
-        </ScrollView>
+        </ScrollView
     </Grid>
     
 </ContentPage>

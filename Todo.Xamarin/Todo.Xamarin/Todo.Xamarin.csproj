@@ -13,4 +13,8 @@
     <PackageReference Include="Xamarin.Forms" Version="4.1.0.555618" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Todo.WebAPIWrapper\Todo.WebAPIWrapper.csproj" />
+  </ItemGroup>
 </Project>

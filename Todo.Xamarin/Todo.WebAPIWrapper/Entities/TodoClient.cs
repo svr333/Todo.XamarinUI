@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -8,9 +10,9 @@ namespace Todo.WebAPIWrapper.Entities
 {
     public class TodoClient
     {
-        private const string Api = "Api.drax.codes/Api/{0}";
+        private const string Api = "https://api.drax.codes/api";
         private const string UserName = "daniel";
-        private const string PassWord = "daniel";
+        private const string Password = "daniel";
 
         private readonly HttpClient _client;
 
@@ -20,31 +22,33 @@ namespace Todo.WebAPIWrapper.Entities
 
             _client = client;
 
-            if (_client == null)
-            {
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", $"{UserName}:{PassWord}");
-            }
+            if (_client != null) { return; }
+
+            _client = new HttpClient();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
+                ASCIIEncoding.ASCII.GetBytes($"{UserName}:{Password}")));
+
         }
 
-        public TodoTask[] Tasks { get => GetOrRefreshTodos().Result; }
+        public Tasks Tasks { get => GetOrRefreshTodos().Result; }
 
-        public async Task<TodoTask[]> GetOrRefreshTodos()
+        public async Task<Tasks> GetOrRefreshTodos()
         {
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"{string.Format(Api, "todo/list")}");
-            var httpResponse = await _client.SendAsync(httpRequest);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{Api}/todo/list");
+            var httpResponse = await _client.SendAsync(request).ConfigureAwait(false);
 
             httpResponse.EnsureSuccessStatusCode();
 
             var json = await httpResponse.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<TodoTask[]>(json);
+            return JsonConvert.DeserializeObject<Tasks>(json);
         }
 
         public async Task AddTodoAsync(TodoTask todo)
         {
             var json = JsonConvert.SerializeObject(todo);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{string.Format(Api, "todo/add")}");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{Api}/todo/add");
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _client.SendAsync(request);
@@ -55,10 +59,10 @@ namespace Todo.WebAPIWrapper.Entities
         {
             var json = JsonConvert.SerializeObject(todos);
 
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"{string.Format(Api, "todo/removemany")}");
-            httpRequest.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{Api}/todo/removemany");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _client.SendAsync(httpRequest);
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
         }
     }
