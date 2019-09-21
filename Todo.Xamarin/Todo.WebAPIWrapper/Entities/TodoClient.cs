@@ -10,7 +10,7 @@ namespace Todo.WebAPIWrapper.Entities
 {
     public class TodoClient
     {
-        private const string Api = "https://api.drax.codes/api";
+        private const string Api = "https://api.drax.codes/api/todo";
         private const string UserName = "daniel";
         private const string Password = "daniel";
 
@@ -34,7 +34,7 @@ namespace Todo.WebAPIWrapper.Entities
 
         public async Task<Tasks> GetOrRefreshTodos()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{Api}/todo/list");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{Api}/list");
             var httpResponse = await _client.SendAsync(request).ConfigureAwait(false);
 
             httpResponse.EnsureSuccessStatusCode();
@@ -48,7 +48,7 @@ namespace Todo.WebAPIWrapper.Entities
         {
             var json = JsonConvert.SerializeObject(todo);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{Api}/todo/add");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{Api}/add");
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _client.SendAsync(request);
@@ -59,7 +59,18 @@ namespace Todo.WebAPIWrapper.Entities
         {
             var json = JsonConvert.SerializeObject(todos);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{Api}/todo/removemany");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{Api}/removemany");
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteTodoAsync(TodoTask todo)
+        {
+            var json = JsonConvert.SerializeObject(todo);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{Api}/remove");
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _client.SendAsync(request);
